@@ -11,8 +11,9 @@ public class BankService {
         this.accounts = new ArrayList<>();
     }
 
-    public String openAccount(Client client){
-        Account account = new Account(client.firstName() + "001", BigDecimal.ZERO, client);
+    public String openAccount(Client... client){
+        String  accountNumber = String.valueOf(accounts.size() + 1).formatted("%03d");
+        Account account = new Account(accountNumber, BigDecimal.ZERO, client);
         accounts.add(account);
         return account.getAccountNumber();
     }
@@ -43,4 +44,21 @@ public class BankService {
         return null;
     }
 
+    //Write a method `public List<String> split(String accountNumber)` in the service that splits an account equally.
+    // From a joint account, individual accounts should be created for each account holder.
+    // It should return the newly created account numbers.
+    // Each account should receive the same amount of money after the split (+- 1 cent).
+    // Make sure that the bank does not incur any cent gains or losses during the process.
+
+    public List<String> split(String accountNumber){
+        Account jointAccount = findAccount(accountNumber);
+        List<Client> clients = jointAccount.getClient();
+        BigDecimal amount = jointAccount.getAccountBalance().divide(new BigDecimal(clients.size()), 2, BigDecimal.ROUND_HALF_EVEN);
+        List<String> newAccountNumbers = new ArrayList<>();
+        for (Client client : clients){
+            newAccountNumbers.add(openAccount(client));
+            this.moneyTransfer(jointAccount.getAccountNumber(), newAccountNumbers.get(newAccountNumbers.size()-1), amount);
+        }
+        return newAccountNumbers;
+    }
 }

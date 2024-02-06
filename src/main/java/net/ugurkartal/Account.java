@@ -1,18 +1,19 @@
 package net.ugurkartal;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 
 public class Account {
     private String accountNumber;
     private BigDecimal accountBalance;
-    private Client client;
+    private List<Client> client;
 
 
-    public Account(String accountNumber, BigDecimal accountBalance, Client client) {
+    public Account(String accountNumber, BigDecimal accountBalance, Client... clients) {
         this.accountNumber = accountNumber;
         this.accountBalance = accountBalance;
-        this.client = client;
+        this.client = List.of(clients);
     }
 
     @Override
@@ -36,8 +37,8 @@ public class Account {
         this.accountBalance = accountBalance;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
+    public void setClient(Client... client) {
+        this.client = List.of(client);
     }
 
     public String getAccountNumber() {
@@ -48,15 +49,15 @@ public class Account {
         return accountBalance;
     }
 
-    public Client getClient() {
+    public List<Client> getClient() {
         return client;
     }
 
     public void depositMoney(BigDecimal amount){
-        this.setAccountBalance(this.getAccountBalance().add(amount));
+        this.setAccountBalance(this.getAccountBalance().add(amount.setScale(2, BigDecimal.ROUND_HALF_EVEN)));
     }
 
     public void withdrawMoney(BigDecimal amount){ //Minus
-        this.setAccountBalance(this.getAccountBalance().subtract(amount));
+        this.setAccountBalance(this.getAccountBalance().subtract(amount.setScale(2, BigDecimal.ROUND_HALF_EVEN)));
     }
 }
